@@ -1,25 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserEntity } from '../modules/user/model/entities/user.entity';
+import { UserService } from '../modules/user/service/user.service';
 import { UserToken } from './models/UserToken';
 import { userPayload } from './models/userPayload';
-import { UsuarioEntity } from '../dbacesso/usuario/model/entities/usuario.entity';
-import { UsuarioService } from '../dbacesso/usuario/service/usuario.service';
-import { UsuarioSistemaService } from '../dbacesso/usuario_sistema/service/usuario_sistema.service';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usuarioService: UsuarioService,
-    private readonly usuarioSistemaService: UsuarioSistemaService,
+    private readonly userService: UserService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
   ) {}
 
-  login(user: UsuarioEntity): UserToken {
+  login(user: UserEntity): UserToken {
     const payload: userPayload = {
-      sub: Number(user.usua_id),
-      usua_nome: user.usua_nome,
+      sub: Number(user.id),
+      nome: user.nome,
     };
 
     const jwtToken = this.jwtService.sign(payload);
@@ -29,11 +25,10 @@ export class AuthService {
     };
   }
 
-  async validateUser(usua_login: string, usua_senha: string) {
-    const user = await this.usuarioService.findOneByUserLogin(usua_login);
-    await this.validatePermissionUser(user.usua_id);
+  async validateUser(email: string, password: string) {
+    const user = await this.userService.findOneByEmail(email);
 
-    if (user.usua_senha !== usua_senha)
+    if (user.password !== password)
       throw new HttpException(
         'Credenciais inválidas!',
         HttpStatus.UNAUTHORIZED,
@@ -45,21 +40,6 @@ export class AuthService {
     };
 
     return newObjectReturn;
-  }
-
-  private async validatePermissionUser(idUser: number) {
-    const idSystem = this.configService.get<number>('ID_SISTEMA');
-
-    const userPermissionVerify =
-      await this.usuarioSistemaService.findOneByUserAndSystem(idUser, idSystem);
-
-    if (!userPermissionVerify)
-      throw new HttpException(
-        'Você não tem permissão para acessar o sistema!',
-        HttpStatus.UNAUTHORIZED,
-      );
-
-    return userPermissionVerify;
   }
 
   verifyToken(token: string) {

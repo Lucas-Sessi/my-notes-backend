@@ -1,9 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './model/dto/create-user.dto';
-import { UpdateUserDto } from './model/dto/update-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { GenerateException } from 'src/utils/exceptions/generateExceptionError';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from '../model/dto/create-user.dto';
+import { UpdateUserDto } from '../model/dto/update-user.dto';
+import { UserEntity } from '../model/entities/user.entity';
+
 
 @Injectable()
 export class UserService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) { }
+
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
@@ -12,8 +22,14 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOneByEmail(email: string) {
+    try {
+      return this.userRepository.findOne({
+        where: { email: email },
+      })
+    } catch (error) {
+      GenerateException(error)
+    }
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

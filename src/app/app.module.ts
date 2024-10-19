@@ -1,23 +1,24 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './modules/user/user.module';
 import { ConfigModule } from '@nestjs/config';
-import * as fs from 'fs';
-import { configValidationSchema } from './config/config.validation';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { DatabaseModule } from 'src/database/db/db.module';
 import { LoggerInterceptor } from 'src/utils/interceptors/logger.interceptor';
 import { ResponseInterceptor } from 'src/utils/interceptors/response.interceptor';
+import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { configValidationSchema } from './config/config.validation';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: fs.existsSync('.env.production')
-      ? '.env.production'
-      : '.env.development',
+      envFilePath: '.env',
       validationSchema: configValidationSchema,
     }),
     UserModule,
+    DatabaseModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [
