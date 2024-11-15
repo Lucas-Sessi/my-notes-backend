@@ -8,6 +8,10 @@ import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { configValidationSchema } from './config/config.validation';
 import { UserModule } from './modules/user/user.module';
+import { CategoriaInvestimentoModule } from './modules/categoria_investimento/categoria_investimento.module';
+import { AtivoInvestimentoModule } from './modules/ativo_investimento/ativo_investimento.module';
+import { CategoriaUsuarioModule } from './modules/categoria_usuario/categoria_usuario.module';
+import { AtivoUsuarioModule } from './modules/ativo_usuario/ativo_usuario.module';
 
 @Module({
   imports: [
@@ -19,13 +23,17 @@ import { UserModule } from './modules/user/user.module';
     UserModule,
     DatabaseModule,
     AuthModule,
+    CategoriaInvestimentoModule,
+    AtivoInvestimentoModule,
+    CategoriaUsuarioModule,
+    AtivoUsuarioModule,
   ],
   controllers: [],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
+    //{
+      //provide: APP_GUARD,
+      //useClass: JwtAuthGuard,
+    //},
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggerInterceptor,
