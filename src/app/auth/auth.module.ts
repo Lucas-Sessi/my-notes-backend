@@ -1,16 +1,17 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { LoginValidationMiddleware } from 'src/middlewares/login-validation.middleware';
+import { UserModule } from '../modules/user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
-import { LoginValidationMiddleware } from 'src/middlewares/login-validation.middleware';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    UsuarioModule,
+    UserModule,
     PassportModule,
     ConfigModule,
     JwtModule.registerAsync({

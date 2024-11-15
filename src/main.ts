@@ -1,11 +1,10 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
-import { Swagger } from './services/swagger/swagger.config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import * as express from 'express';
 import * as fs from 'fs';
+import { AppModule } from './app/app.module';
+import { Swagger } from './services/swagger/swagger.config';
 
 async function bootstrap() {
   let app: NestExpressApplication;
@@ -28,11 +27,11 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  const uploadDir = configService.get<string>('UPLOAD_DIR');
+  // const uploadDir = configService.get<string>('UPLOAD_DIR');
   const port = configService.get<number>('PORT');
   const enableSwagger = configService.get<boolean>('HABILITAR_SWAGGER');
 
-  app.use('/assets/images', express.static(uploadDir));
+  // app.use('/assets/images', express.static(uploadDir));
 
   app.enableCors({
     origin: '*',
